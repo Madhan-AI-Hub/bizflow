@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const AuthContext = createContext();
 
@@ -17,9 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
 
   useEffect(() => {
-    // Set axios default header
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       loadUser();
     } else {
       setLoading(false);
@@ -28,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const res = await axios.get('/api/auth/profile');
+      const res = await api.get('/auth/profile');
       setUser(res.data.data);
     } catch (error) {
       console.error('Failed to load user:', error);
@@ -42,14 +40,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', authToken);
     setToken(authToken);
     setUser(userData);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   const isAdmin = () => {
