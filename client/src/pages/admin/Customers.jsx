@@ -27,9 +27,11 @@ import EmptyState from '../../components/EmptyState';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { useToast } from '../../components/Toast';
 import { customerService } from '../../services/customerService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const Customers = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -47,7 +49,7 @@ const Customers = () => {
       const res = await customerService.getCustomers(search);
       setCustomers(res.data);
     } catch (error) {
-      showToast('Failed to load customers', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -57,17 +59,17 @@ const Customers = () => {
     try {
       if (editId) {
         await customerService.updateCustomer(editId, formData);
-        showToast('Customer updated successfully');
+        showToast(t('updateSuccess'));
       } else {
         await customerService.createCustomer(formData);
-        showToast('Customer created successfully');
+        showToast(t('createSuccess'));
       }
       setDialogOpen(false);
       setFormData({ name: '', email: '', phone: '', address: '', notes: '', password: '' });
       setEditId(null);
       loadCustomers();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Operation failed', 'error');
+      showToast(error.response?.data?.message || t('operationFailed'), 'error');
     }
   };
 
@@ -87,11 +89,11 @@ const Customers = () => {
   const handleDelete = async () => {
     try {
       await customerService.deleteCustomer(deleteDialog.id);
-      showToast('Customer deleted successfully');
+      showToast(t('deleteSuccess'));
       setDeleteDialog({ open: false, id: null });
       loadCustomers();
     } catch (error) {
-      showToast('Delete failed', 'error');
+      showToast(t('operationFailed'), 'error');
     }
   };
 
@@ -99,11 +101,11 @@ const Customers = () => {
     <AppLayout>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
-          <Typography variant="h4" fontWeight="700">Customers</Typography>
-          <Typography variant="body2" color="text.secondary">Manage your customer database</Typography>
+          <Typography variant="h4" fontWeight="700">{t('customers')}</Typography>
+          <Typography variant="body2" color="text.secondary">{t('manageCustomers')}</Typography>
         </Box>
         <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>
-          Add Customer
+          {t('addCustomer')}
         </Button>
       </Box>
 
@@ -111,7 +113,7 @@ const Customers = () => {
         <CardContent>
           <TextField
             fullWidth
-            placeholder="Search customers..."
+            placeholder={t('search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             InputProps={{ startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} /> }}
@@ -122,18 +124,18 @@ const Customers = () => {
       {loading ? (
         <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>
       ) : customers.length === 0 ? (
-        <Card><EmptyState title="No customers yet" message="Start by adding your first customer" actionLabel="Add Customer" onAction={() => setDialogOpen(true)} /></Card>
+        <Card><EmptyState title={t('noCustomersYet')} message={t('addYourFirstCustomer')} actionLabel={t('addCustomer')} onAction={() => setDialogOpen(true)} /></Card>
       ) : (
         <Card>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Name</strong></TableCell>
-                  <TableCell><strong>Phone</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Total Spent</strong></TableCell>
-                  <TableCell align="right"><strong>Actions</strong></TableCell>
+                  <TableCell><strong>{t('name')}</strong></TableCell>
+                  <TableCell><strong>{t('phone')}</strong></TableCell>
+                  <TableCell><strong>{t('email')}</strong></TableCell>
+                  <TableCell><strong>{t('total')}</strong></TableCell>
+                  <TableCell align="right"><strong>{t('actions')}</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -156,24 +158,24 @@ const Customers = () => {
       )}
 
       <Dialog open={dialogOpen} onClose={() => { setDialogOpen(false); setEditId(null); setFormData({ name: '', email: '', phone: '', address: '', notes: '', password: '' }); }} maxWidth="sm" fullWidth>
-        <DialogTitle>{editId ? 'Edit Customer' : 'Add Customer'}</DialogTitle>
+        <DialogTitle>{editId ? t('edit') : t('addCustomer')}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
-            <Grid item xs={12}><TextField fullWidth label="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Password (for portal access)" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder={editId ? "Leave blank to keep current" : "Set password for customer login"} helperText="This password allows customers to log in to their portal." /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Notes" multiline rows={2} value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('name')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth label={t('phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required /></Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth label={t('email')} type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('address')} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('password')} type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} helperText={t('leaveBlankToKeepPassword')} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('notes')} multiline rows={2} value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /></Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setDialogOpen(false); setEditId(null); }}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>{editId ? 'Update' : 'Create'}</Button>
+          <Button onClick={() => { setDialogOpen(false); setEditId(null); }}>{t('cancel')}</Button>
+          <Button variant="contained" onClick={handleSubmit}>{editId ? t('update') : t('create')}</Button>
         </DialogActions>
       </Dialog>
 
-      <ConfirmDialog open={deleteDialog.open} title="Delete Customer" message="Are you sure you want to delete this customer?" onConfirm={handleDelete} onCancel={() => setDeleteDialog({ open: false, id: null })} />
+      <ConfirmDialog open={deleteDialog.open} title={t('delete')} message={t('areYouSureDeleteEmployee')} onConfirm={handleDelete} onCancel={() => setDeleteDialog({ open: false, id: null })} />
     </AppLayout>
   );
 };

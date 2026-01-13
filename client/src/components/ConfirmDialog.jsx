@@ -7,8 +7,10 @@ import {
   DialogContentText,
   Button
 } from '@mui/material';
+import { useTranslation } from '../hooks/useTranslation';
 
 const ConfirmDialog = ({ open, title, message, onConfirm, onCancel }) => {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onClose={onCancel}>
       <DialogTitle>{title}</DialogTitle>
@@ -17,10 +19,10 @@ const ConfirmDialog = ({ open, title, message, onConfirm, onCancel }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="inherit">
-          Cancel
+          {t('cancel')}
         </Button>
         <Button onClick={onConfirm} color="error" variant="contained" autoFocus>
-          Confirm
+          {t('yes')}
         </Button>
       </DialogActions>
     </Dialog>

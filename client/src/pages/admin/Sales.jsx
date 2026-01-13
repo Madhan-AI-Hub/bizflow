@@ -5,11 +5,13 @@ import AppLayout from '../../components/Layout/AppLayout';
 import EmptyState from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import { saleService } from '../../services/saleService';
+import { useTranslation } from '../../hooks/useTranslation';
 import { customerService } from '../../services/customerService';
 import { productService } from '../../services/productService';
 
 const Sales = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [sales, setSales] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -32,7 +34,7 @@ const Sales = () => {
       setCustomers(customersRes.data);
       setProducts(productsRes.data);
     } catch (error) {
-      showToast('Failed to load data', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -52,23 +54,23 @@ const Sales = () => {
         amountPaid: parseFloat(formData.amountPaid) || 0,
         notes: formData.notes 
       });
-      showToast('Sale created successfully');
+      showToast(t('saleCreatedSuccess'));
       setDialogOpen(false);
       setFormData({ customerId: null, items: [], paymentMethod: 'CASH', amountPaid: 0, notes: '' });
       setSelectedItems([{ product: null, quantity: 1 }]);
       loadData();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Operation failed', 'error');
+      showToast(error.response?.data?.message || t('operationFailed'), 'error');
     }
   };
 
   const handleSettle = async (sale) => {
     try {
       await saleService.updateSale(sale._id, { amountPaid: sale.balanceAmount });
-      showToast('Sale settled successfully');
+      showToast(t('updateSuccess'));
       loadData();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Settlement failed', 'error');
+      showToast(error.response?.data?.message || t('operationFailed'), 'error');
     }
   };
 
@@ -81,11 +83,11 @@ const Sales = () => {
   const handleUpdatePayment = async () => {
     try {
       await saleService.updateSale(selectedSale._id, { amountPaid: parseFloat(paymentAmount) || 0 });
-      showToast('Payment updated successfully');
+      showToast(t('paymentUpdatedSuccess'));
       setEditDialogOpen(false);
       loadData();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Update failed', 'error');
+      showToast(error.response?.data?.message || t('operationFailed'), 'error');
     }
   };
 
@@ -97,7 +99,7 @@ const Sales = () => {
   const handleDeleteConfirm = async () => {
     try {
       await saleService.deleteSale(saleToDelete._id);
-      showToast('Sale deleted successfully');
+      showToast(t('saleDeletedSuccess'));
       setDeleteDialogOpen(false);
       setSaleToDelete(null);
       loadData();
@@ -136,15 +138,15 @@ const Sales = () => {
   return (
     <AppLayout>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box><Typography variant="h4" fontWeight="700">Sales</Typography><Typography variant="body2" color="text.secondary">Track and manage all sales</Typography></Box>
-        <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>Create Sale</Button>
+        <Box><Typography variant="h4" fontWeight="700">{t('sales')}</Typography><Typography variant="body2" color="text.secondary">{t('trackManageSales')}</Typography></Box>
+        <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>{t('createSale')}</Button>
       </Box>
 
-      {loading ? (<Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>) : sales.length === 0 ? (<Card><EmptyState title="No sales yet" message="Start by creating your first sale" actionLabel="Create Sale" onAction={() => setDialogOpen(true)} /></Card>) : (
+      {loading ? (<Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>) : sales.length === 0 ? (<Card><EmptyState title={t('noSalesYet')} message={t('startByCreating')} actionLabel={t('createSale')} onAction={() => setDialogOpen(true)} /></Card>) : (
         <Card>
           <TableContainer>
             <Table>
-              <TableHead><TableRow><TableCell><strong>Date</strong></TableCell><TableCell><strong>Customer</strong></TableCell><TableCell><strong>Total</strong></TableCell><TableCell><strong>Paid</strong></TableCell><TableCell><strong>Balance</strong></TableCell><TableCell><strong>Status</strong></TableCell><TableCell align="right"><strong>Actions</strong></TableCell></TableRow></TableHead>
+              <TableHead><TableRow><TableCell><strong>{t('date')}</strong></TableCell><TableCell><strong>{t('customer')}</strong></TableCell><TableCell><strong>{t('total')}</strong></TableCell><TableCell><strong>{t('paid')}</strong></TableCell><TableCell><strong>{t('balance')}</strong></TableCell><TableCell><strong>{t('status')}</strong></TableCell><TableCell align="right"><strong>{t('actions')}</strong></TableCell></TableRow></TableHead>
               <TableBody>
                 {sales.map((sale) => (
                   <TableRow key={sale._id} hover>
@@ -156,23 +158,23 @@ const Sales = () => {
                       {(sale.balanceAmount || 0) > 0 ? (
                         <Typography color="error.main" variant="body2" fontWeight="600">₹{sale.balanceAmount.toLocaleString()}</Typography>
                       ) : (
-                        <Typography color="success.main" variant="body2" fontWeight="600">Settled</Typography>
+                        <Typography color="success.main" variant="body2" fontWeight="600">{t('settled')}</Typography>
                       )}
                     </TableCell>
                     <TableCell>
                       <Chip 
-                        label={sale.paymentStatus || 'PAID'} 
+                        label={t(sale.paymentStatus === 'PAID' ? 'paid' : sale.paymentStatus === 'PARTIAL' ? 'partial' : 'pending')} 
                         size="small" 
                         color={sale.paymentStatus === 'PAID' ? 'success' : sale.paymentStatus === 'PARTIAL' ? 'warning' : 'error'} 
                       />
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="Update Payment">
+                      <Tooltip title={t('updatePayment')}>
                         <IconButton size="small" color="primary" onClick={() => handleEditOpen(sale)} disabled={sale.balanceAmount <= 0}>
                           <Payment fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete Sale">
+                      <Tooltip title={t('deleteSale')}>
                         <IconButton size="small" color="error" onClick={() => handleDeleteClick(sale)}>
                           <Delete fontSize="small" />
                         </IconButton>
@@ -187,85 +189,85 @@ const Sales = () => {
       )}
 
       <Dialog open={dialogOpen} onClose={() => { setDialogOpen(false); setSelectedItems([{ product: null, quantity: 1 }]); }} maxWidth="md" fullWidth>
-        <DialogTitle>Create New Sale</DialogTitle>
+        <DialogTitle>{t('createNewSale')}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
             <Grid item xs={12}>
-              <Autocomplete options={customers} getOptionLabel={(option) => `${option.name} - ${option.phone}`} onChange={(e, value) => setFormData({ ...formData, customerId: value?._id })} renderInput={(params) => <TextField {...params} label="Select Customer" required />} />
+              <Autocomplete options={customers} getOptionLabel={(option) => `${option.name} - ${option.phone}`} onChange={(e, value) => setFormData({ ...formData, customerId: value?._id })} renderInput={(params) => <TextField {...params} label={t('selectCustomer')} required />} />
             </Grid>
             <Grid item xs={12}>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                <Typography variant="subtitle1" fontWeight="600">Products</Typography>
-                <Button size="small" onClick={addItem}>Add Item</Button>
+                <Typography variant="subtitle1" fontWeight="600">{t('products')}</Typography>
+                <Button size="small" onClick={addItem}>{t('addItem')}</Button>
               </Box>
               {selectedItems.map((item, index) => (
                 <Box key={index} display="flex" gap={1} mb={1}>
-                  <Autocomplete sx={{ flex: 1 }} options={products} getOptionLabel={(option) => `${option.name} - ₹${option.price}`} value={item.product} onChange={(e, value) => updateItem(index, 'product', value)} renderInput={(params) => <TextField {...params} label="Product" size="small" />} />
-                  <TextField type="number" label="Qty" size="small" value={item.quantity} onChange={(e) => updateItem(index, 'quantity', e.target.value)} sx={{ width: 100 }} />
+                  <Autocomplete sx={{ flex: 1 }} options={products} getOptionLabel={(option) => `${option.name} - ₹${option.price}`} value={item.product} onChange={(e, value) => updateItem(index, 'product', value)} renderInput={(params) => <TextField {...params} label={t('products')} size="small" />} />
+                  <TextField type="number" label={t('quantity')} size="small" value={item.quantity} onChange={(e) => updateItem(index, 'quantity', e.target.value)} sx={{ width: 100 }} />
                   {selectedItems.length > 1 && (
                     <IconButton onClick={() => removeItem(index)} color="error" size="small"><Delete /></IconButton>
                   )}
                 </Box>
               ))}
             </Grid>
-            <Grid item xs={12} md={6}><TextField select fullWidth label="Payment Method" value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} SelectProps={{ native: true }}><option value="CASH">Cash</option><option value="CARD">Card</option><option value="UPI">UPI</option><option value="OTHER">Other</option></TextField></Grid>
-            <Grid item xs={12} md={6}><TextField fullWidth type="number" label="Amount Paid" value={formData.amountPaid} onChange={(e) => setFormData({ ...formData, amountPaid: e.target.value })} /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Notes" multiline rows={2} value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /></Grid>
-            <Grid item xs={12}><Box sx={{ p: 2, backgroundColor: 'primary.light', borderRadius: 2 }}><Typography variant="h6" color="primary.dark">Total: ₹{calculateTotal().toLocaleString()}</Typography></Box></Grid>
+            <Grid item xs={12} md={6}><TextField select fullWidth label={t('paymentMethod')} value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} SelectProps={{ native: true }}><option value="CASH">{t('cash')}</option><option value="CARD">{t('card')}</option><option value="UPI">{t('upi')}</option><option value="OTHER">{t('other')}</option></TextField></Grid>
+            <Grid item xs={12} md={6}><TextField fullWidth type="number" label={t('amountPaid')} value={formData.amountPaid} onChange={(e) => setFormData({ ...formData, amountPaid: e.target.value })} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('notes')} multiline rows={2} value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /></Grid>
+            <Grid item xs={12}><Box sx={{ p: 2, backgroundColor: 'primary.light', borderRadius: 2 }}><Typography variant="h6" color="primary.dark">{t('total')}: ₹{calculateTotal().toLocaleString()}</Typography></Box></Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setDialogOpen(false); setSelectedItems([{ product: null, quantity: 1 }]); }}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit} disabled={!formData.customerId || selectedItems.length === 0}>Create Sale</Button>
+          <Button onClick={() => { setDialogOpen(false); setSelectedItems([{ product: null, quantity: 1 }]); }}>{t('cancel')}</Button>
+          <Button variant="contained" onClick={handleSubmit} disabled={!formData.customerId || selectedItems.length === 0}>{t('createSale')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Update Payment</DialogTitle>
+        <DialogTitle>{t('updatePayment')}</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 1 }}>
             <Typography variant="body2" gutterBottom color="text.secondary">
-              Customer: <strong>{selectedSale?.customerName}</strong>
+              {t('customer')}: <strong>{selectedSale?.customerName}</strong>
             </Typography>
             <Typography variant="body2" gutterBottom color="text.secondary">
-              Total Amount: <strong>₹{selectedSale?.totalAmount.toLocaleString()}</strong>
+              {t('totalAmount')}: <strong>₹{selectedSale?.totalAmount.toLocaleString()}</strong>
             </Typography>
             <Typography variant="body2" gutterBottom sx={{ mb: 2 }}>
-              Current Balance: <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>₹{selectedSale?.balanceAmount.toLocaleString()}</span>
+              {t('currentBalance')}: <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>₹{selectedSale?.balanceAmount.toLocaleString()}</span>
             </Typography>
             
             <TextField
               fullWidth
-              label="Additional Amount Paid"
+              label={t('additionalAmountPaid')}
               type="number"
               value={paymentAmount}
               onChange={(e) => setPaymentAmount(e.target.value)}
-              helperText={`New Balance will be ₹${Math.max(0, (selectedSale?.balanceAmount || 0) - (parseFloat(paymentAmount) || 0)).toLocaleString()}`}
+              helperText={`${t('newBalanceWillBe')} ₹${Math.max(0, (selectedSale?.balanceAmount || 0) - (parseFloat(paymentAmount) || 0)).toLocaleString()}`}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleUpdatePayment} disabled={paymentAmount <= 0}>Update Payment</Button>
+          <Button onClick={() => setEditDialogOpen(false)}>{t('cancel')}</Button>
+          <Button variant="contained" onClick={handleUpdatePayment} disabled={paymentAmount <= 0}>{t('update')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} maxWidth="xs">
-        <DialogTitle>Delete Sale</DialogTitle>
+        <DialogTitle>{t('deleteSale')}</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete this sale for <strong>{saleToDelete?.customerName}</strong>?
+            {t('areYouSureDeleteSale')} <strong>{saleToDelete?.customerName}</strong>?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Total Amount: ₹{saleToDelete?.totalAmount.toLocaleString()}
+            {t('totalAmount')}: ₹{saleToDelete?.totalAmount.toLocaleString()}
           </Typography>
           <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-            This action cannot be undone.
+            {t('thisActionCannotBeUndone')}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>Delete</Button>
+          <Button onClick={() => setDeleteDialogOpen(false)}>{t('cancel')}</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>{t('delete')}</Button>
         </DialogActions>
       </Dialog>
     </AppLayout>

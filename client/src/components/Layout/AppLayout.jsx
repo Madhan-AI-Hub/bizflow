@@ -32,11 +32,14 @@ import {
   Logout,
   HelpOutline,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Translate
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { translations } from '../../utils/translations';
 
 const drawerWidth = 260;
 const miniDrawerWidth = 70;
@@ -46,6 +49,7 @@ const AppLayout = ({ children }) => {
   const location = useLocation();
   const { user, logout, isAdmin, isCustomer } = useAuth();
   const { mode, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
   const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
@@ -80,30 +84,31 @@ const AppLayout = ({ children }) => {
   };
 
   let menuItems = [];
+  const t = (key) => translations[language][key] || key;
   
   if (isAdmin()) {
     menuItems = [
-      { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-      { text: 'Business Profile', icon: <Business />, path: '/business' },
-      { text: 'Customers', icon: <People />, path: '/customers' },
-      { text: 'Products', icon: <Inventory />, path: '/products' },
-      { text: 'Sales', icon: <ShoppingCart />, path: '/sales' },
-      { text: 'Expenses', icon: <AccountBalance />, path: '/expenses' },
-      { text: 'Employees', icon: <People />, path: '/employees' },
-      { text: 'Support', icon: <HelpOutline />, path: '/support' }
+      { text: t('dashboard'), icon: <Dashboard />, path: '/dashboard' },
+      { text: t('businessProfile'), icon: <Business />, path: '/business' },
+      { text: t('customers'), icon: <People />, path: '/customers' },
+      { text: t('products'), icon: <Inventory />, path: '/products' },
+      { text: t('sales'), icon: <ShoppingCart />, path: '/sales' },
+      { text: t('expenses'), icon: <AccountBalance />, path: '/expenses' },
+      { text: t('employees'), icon: <People />, path: '/employees' },
+      { text: t('support'), icon: <HelpOutline />, path: '/support' }
     ];
   } else if (isCustomer()) {
     menuItems = [
-      { text: 'My Dashboard', icon: <Dashboard />, path: '/customer/dashboard' },
-      { text: 'Support', icon: <HelpOutline />, path: '/support' }
+      { text: t('myDashboard'), icon: <Dashboard />, path: '/customer/dashboard' },
+      { text: t('support'), icon: <HelpOutline />, path: '/support' }
     ];
   } else {
     menuItems = [
-      { text: 'Dashboard', icon: <Dashboard />, path: '/staff/dashboard' },
-      { text: 'Customers', icon: <People />, path: '/staff/customers' },
-      { text: 'Sales', icon: <ShoppingCart />, path: '/staff/sales' },
-      { text: 'Products', icon: <Inventory />, path: '/staff/products' },
-      { text: 'Support', icon: <HelpOutline />, path: '/support' }
+      { text: t('dashboard'), icon: <Dashboard />, path: '/staff/dashboard' },
+      { text: t('customers'), icon: <People />, path: '/staff/customers' },
+      { text: t('sales'), icon: <ShoppingCart />, path: '/staff/sales' },
+      { text: t('products'), icon: <Inventory />, path: '/staff/products' },
+      { text: t('support'), icon: <HelpOutline />, path: '/support' }
     ];
   }
 
@@ -255,6 +260,12 @@ const AppLayout = ({ children }) => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton onClick={toggleLanguage} color="inherit" title={language === 'en' ? 'Switch to Tamil' : 'Switch to English'}>
+              <Translate sx={{ fontSize: 20 }} />
+              <Typography variant="caption" sx={{ ml: 0.5, fontSize: '0.7rem' }}>
+                {language === 'en' ? 'த' : 'EN'}
+              </Typography>
+            </IconButton>
             <IconButton onClick={toggleTheme} color="inherit">
               {mode === 'dark' ? <Brightness7 sx={{ fontSize: 20 }} /> : <Brightness4 sx={{ fontSize: 20 }} />}
             </IconButton>

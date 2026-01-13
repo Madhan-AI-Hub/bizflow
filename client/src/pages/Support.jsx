@@ -25,10 +25,12 @@ import {
   Launch
 } from '@mui/icons-material';
 import AppLayout from '../components/Layout/AppLayout';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Support = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const { t } = useTranslation();
 
   const handleEmailDeveloper = () => {
     const subject = encodeURIComponent("BizFlow App Query / Support Request");
@@ -38,20 +40,20 @@ const Support = () => {
 
   const faqs = [
     {
-      q: "How do I clear numeric fields in sales?",
-      a: "You can simply backspace the entire value in quantity or amount fields. The app will let you leave it blank while typing and will only apply safe defaults (like 0 or 1) when you finish or submit."
+      q: t('faq1Q'),
+      a: t('faq1A')
     },
     {
-      q: "Can staff members see total business profit?",
-      a: "No. The dashboard is personalized. Staff members can only see their own sales performance and revenue. Sensitive business-wide financial data is restricted to Admins."
+      q: t('faq2Q'),
+      a: t('faq2A')
     },
     {
-      q: "How do I update my business information?",
-      a: "Admins can go to the Business Profile page from the sidebar to update details like name, category, and contact information."
+      q: t('faq3Q'),
+      a: t('faq3A')
     },
     {
-      q: "Is dark mode supported?",
-      a: "Yes! You can toggle between light and dark modes using the theme icon in the sidebar for a more comfortable viewing experience."
+      q: t('faq4Q'),
+      a: t('faq4A')
     }
   ];
 
@@ -59,10 +61,10 @@ const Support = () => {
     <AppLayout>
       <Box mb={6} textAlign="center">
         <Typography variant="h4" fontWeight="900" color="text.primary" gutterBottom>
-          About & Support
+          {t('aboutSupport')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Everything you need to know about BizFlow and how to get help.
+          {t('aboutAppDesc')}
         </Typography>
       </Box>
 
@@ -95,23 +97,23 @@ const Support = () => {
               BizFlow
             </Typography>
             <Typography variant="subtitle2" color="text.secondary" sx={{ opacity: 0.8, mb: 3 }}>
-              Version 1.1.0 (Stable)
+              {t('appVersion')}
             </Typography>
 
             <Stack spacing={2} width="100%" mb={4}>
               <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
                 <Code fontSize="small" color="action" />
-                <Typography variant="body2" fontWeight="600">Developed by Madhan</Typography>
+                <Typography variant="body2" fontWeight="600">{t('developedBy')}</Typography>
               </Box>
               <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
                 <Verified fontSize="small" color="success" />
-                <Typography variant="body2" color="text.secondary">Running on Smart-Engine v2</Typography>
+                <Typography variant="body2" color="text.secondary">{t('runningOn')}</Typography>
               </Box>
             </Stack>
 
             <Divider sx={{ width: '80%', mb: 4 }} />
 
-            <Typography variant="h6" fontWeight="700" mb={2}>Have a Quick Query?</Typography>
+            <Typography variant="h6" fontWeight="700" mb={2}>{t('haveQuery')}</Typography>
             <Button 
               variant="contained" 
               size="large" 
@@ -128,7 +130,7 @@ const Support = () => {
                 '&:hover': { bgcolor: '#00DA5C' }
               }}
             >
-              Email Developer Directly
+              {t('emailDev')}
             </Button>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5 }}>
               madhanac0711@gmail.com
@@ -140,7 +142,7 @@ const Support = () => {
         <Grid item xs={12} md={7}>
           <Box mb={3} display="flex" alignItems="center" gap={1}>
             <HelpCenter color="primary" />
-            <Typography variant="h5" fontWeight="800">General Q&A</Typography>
+            <Typography variant="h5" fontWeight="800">{t('generalQA')}</Typography>
           </Box>
           
           <Stack spacing={2}>
@@ -174,9 +176,9 @@ const Support = () => {
               <Box display="flex" alignItems="start" gap={2}>
                 <Info sx={{ color: '#00ED64', mt: 0.5 }} />
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="700">Need Feature Customization?</Typography>
+                  <Typography variant="subtitle1" fontWeight="700">{t('needCustomization')}</Typography>
                   <Typography variant="body2" sx={{ opacity: 0.8, mb: 2 }}>
-                    If your business requires specific features or custom reports, don't hesitate to reach out. I can help tailor BizFlow to your exact needs.
+                    {t('customizationDesc')}
                   </Typography>
                   <Button 
                     size="small" 
@@ -184,7 +186,7 @@ const Support = () => {
                     onClick={handleEmailDeveloper}
                     sx={{ color: '#00ED64', borderColor: '#00ED64', fontWeight: 700, '&:hover': { borderColor: '#00ED64', bgcolor: 'rgba(0,237,100,0.1)' } }}
                   >
-                    Request Feature
+                    {t('requestFeature')}
                   </Button>
                 </Box>
               </Box>

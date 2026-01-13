@@ -13,16 +13,20 @@ import {
   CircularProgress,
   useTheme
 } from '@mui/material';
-import { Visibility, VisibilityOff, Receipt } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Receipt, Translate } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { authService } from '../services/authService';
+import { useTranslation } from '../hooks/useTranslation';
+import { useLanguage } from '../context/LanguageContext';
 import ForgotPasswordDialog from '../components/Auth/ForgotPasswordDialog';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
+  const { language, toggleLanguage } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
@@ -42,7 +46,7 @@ const Login = () => {
     try {
       const response = await authService.login(formData);
       login(response.data.user, response.data.token);
-      showToast('Login successful!', 'success');
+      showToast(t('loginSuccess'), 'success');
       
       // Redirect based on role
       if (response.data.user.role === 'ADMIN') {
@@ -51,7 +55,7 @@ const Login = () => {
         navigate('/staff/dashboard');
       }
     } catch (error) {
-      showToast(error.response?.data?.message || 'Login failed', 'error');
+      showToast(error.response?.data?.message || t('loginFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -70,6 +74,15 @@ const Login = () => {
         py: 4
       }}
     >
+      <Box sx={{ position: 'absolute', top: 20, right: 20 }}>
+        <Button 
+          startIcon={<Translate />} 
+          onClick={toggleLanguage} 
+          sx={{ color: isDark ? 'white' : '#001E2B' }}
+        >
+          {language === 'en' ? 'தமிழ்' : 'English'}
+        </Button>
+      </Box>
       <Container maxWidth="sm">
         <Box textAlign="center" mb={4}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, mb: 1 }}>
@@ -84,7 +97,7 @@ const Login = () => {
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : '#5C6B75', fontWeight: 400 }}>
-            Unified business management platform
+            {t('unifiedPlatform')}
           </Typography>
         </Box>
 
@@ -96,18 +109,18 @@ const Login = () => {
         }}>
           <CardContent sx={{ p: { xs: 3, md: 5 } }}>
             <Typography variant="h5" fontWeight="700" sx={{ color: isDark ? 'white' : '#001E2B', mb: 1 }} textAlign="center">
-              Login
+              {t('login')}
             </Typography>
             <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#5C6B75', mb: 4 }} textAlign="center">
-              Enter your credentials to access your cluster
+              {t('signIn')}
             </Typography>
 
             <form onSubmit={handleSubmit}>
               <Box sx={{ mb: 2.5 }}>
-                 <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Email Address
-                 </Typography>
-                 <TextField
+                  <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
+                    {t('email')}
+                  </Typography>
+                  <TextField
                     fullWidth
                     name="email"
                     type="email"
@@ -126,9 +139,9 @@ const Login = () => {
               </Box>
               
               <Box sx={{ mb: 4 }}>
-                 <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Password
-                 </Typography>
+                  <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
+                    {t('password')}
+                  </Typography>
                  <TextField
                     fullWidth
                     name="password"
@@ -170,39 +183,39 @@ const Login = () => {
                     '&:hover': { bgcolor: '#00DA5C' }
                 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Log In'}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t('login')}
               </Button>
 
               <Box sx={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#E8EDEB'}`, pt: 3, textAlign: 'center' }}>
                   <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#5C6B75' }}>
-                    Don't have an account?{' '}
+                    {t('alreadyHaveAccount')}{' '}
                     <Link to="/register" style={{ color: '#00ED64', textDecoration: 'none', fontWeight: 600 }}>
-                      Create one
+                      {t('createOne')}
                     </Link>
                   </Typography>
               </Box>
             </form>
             
-            <Box textAlign="center" mt={2}>
-               <Button 
-                 variant="text" 
-                 size="small" 
-                 sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary', textTransform: 'none' }}
-                 onClick={() => setForgotPasswordOpen(true)}
-               >
-                 Forgot Password?
-               </Button>
-            </Box>
-            <Box textAlign="center" mt={1}>
-               <Button 
-                 variant="text" 
-                 size="small" 
-                 sx={{ color: '#00ED64', textTransform: 'none', fontWeight: 600 }}
-                 onClick={() => navigate('/customer/login')}
-               >
-                 Switch to Customer Login →
-               </Button>
-            </Box>
+             <Box textAlign="center" mt={2}>
+                <Button 
+                  variant="text" 
+                  size="small" 
+                  sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary', textTransform: 'none' }}
+                  onClick={() => setForgotPasswordOpen(true)}
+                >
+                  {t('forgotPassword')}
+                </Button>
+             </Box>
+             <Box textAlign="center" mt={1}>
+                <Button 
+                  variant="text" 
+                  size="small" 
+                  sx={{ color: '#00ED64', textTransform: 'none', fontWeight: 600 }}
+                  onClick={() => navigate('/customer/login')}
+                >
+                  {t('switchToCustomerLogin')} →
+                </Button>
+             </Box>
           </CardContent>
         </Card>
       </Container>

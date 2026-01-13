@@ -18,11 +18,13 @@ import { Visibility, VisibilityOff, Receipt } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { authService } from '../services/authService';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,10 +46,10 @@ const Register = () => {
     try {
       const response = await authService.register(formData);
       login(response.data.user, response.data.token);
-      showToast('Registration successful! Welcome to BizFlow!', 'success');
+      showToast(t('registrationSuccess'), 'success');
       navigate('/dashboard');
     } catch (error) {
-      showToast(error.response?.data?.message || 'Registration failed', 'error');
+      showToast(error.response?.data?.message || t('registrationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -80,7 +82,7 @@ const Register = () => {
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : '#5C6B75', fontWeight: 400 }}>
-            The most effective way to manage your local business
+            {t('landingHeroSubtitle')}
           </Typography>
         </Box>
 
@@ -92,17 +94,17 @@ const Register = () => {
         }}>
           <CardContent sx={{ p: { xs: 3, md: 5 } }}>
             <Typography variant="h5" fontWeight="700" sx={{ color: isDark ? 'white' : '#001E2B', mb: 1 }} textAlign="center">
-              Create Your Atlas Account
+              {t('createAccount')}
             </Typography>
             <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#5C6B75', mb: 4 }} textAlign="center">
-              No credit card required. Start your 30-day free trial.
+              {t('noCreditCard')}
             </Typography>
 
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Full Name
+                    {t('fullName')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -110,7 +112,7 @@ const Register = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your name"
+                    placeholder={t('enterName')}
                     sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -122,7 +124,7 @@ const Register = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Email Address
+                    {t('email')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -143,7 +145,7 @@ const Register = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Password
+                    {t('password')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -152,7 +154,7 @@ const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    placeholder="Min. 8 characters"
+                    placeholder={t('minCharacters')}
                     sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -173,7 +175,7 @@ const Register = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Business Name
+                    {t('businessName')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -181,7 +183,7 @@ const Register = () => {
                     value={formData.businessName}
                     onChange={handleChange}
                     required
-                    placeholder="Your shop or company name"
+                    placeholder={t('businessNamePlaceholder')}
                     sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -193,12 +195,12 @@ const Register = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Business Category
+                    {t('category')}
                   </Typography>
                   <TextField
                     fullWidth
                     name="businessCategory"
-                    placeholder="e.g., Retail, Cafe, Salon"
+                    placeholder={t('businessCategoryPlaceholder')}
                     value={formData.businessCategory}
                     onChange={handleChange}
                     required
@@ -229,14 +231,14 @@ const Register = () => {
                     '&:hover': { bgcolor: '#00DA5C' }
                 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Create My Atlas Account'}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t('createAccount')}
               </Button>
 
               <Box sx={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#E8EDEB'}`, pt: 3, textAlign: 'center' }}>
                   <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#5C6B75' }}>
-                    Already have an account?{' '}
+                    {t('alreadyHaveAccount')}{' '}
                     <Link to="/login" style={{ color: '#00ED64', textDecoration: 'none', fontWeight: 600 }}>
-                      Log In
+                      {t('login')}
                     </Link>
                   </Typography>
               </Box>

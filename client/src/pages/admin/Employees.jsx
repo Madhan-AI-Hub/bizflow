@@ -6,9 +6,11 @@ import EmptyState from '../../components/EmptyState';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { useToast } from '../../components/Toast';
 import { employeeService } from '../../services/employeeService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const Employees = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -24,7 +26,7 @@ const Employees = () => {
       const res = await employeeService.getEmployees();
       setEmployees(res.data);
     } catch (error) {
-      showToast('Failed to load employees', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -34,10 +36,10 @@ const Employees = () => {
     try {
       if (editMode) {
         await employeeService.updateEmployee(editId, formData);
-        showToast('Employee updated successfully');
+        showToast(t('employeeUpdatedSuccess'));
       } else {
         await employeeService.createEmployee(formData);
-        showToast('Employee created successfully');
+        showToast(t('employeeCreatedSuccess'));
       }
       setDialogOpen(false);
       setFormData({ name: '', email: '', password: '' });
@@ -45,7 +47,7 @@ const Employees = () => {
       setEditId(null);
       loadEmployees();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Operation failed', 'error');
+      showToast(error.response?.data?.message || t('operationFailed'), 'error');
     }
   };
 
@@ -59,26 +61,26 @@ const Employees = () => {
   const handleDelete = async () => {
     try {
       await employeeService.deleteEmployee(deleteDialog.id);
-      showToast('Employee deleted successfully');
+      showToast(t('employeeDeletedSuccess'));
       setDeleteDialog({ open: false, id: null });
       loadEmployees();
     } catch (error) {
-      showToast('Delete failed', 'error');
+      showToast(t('operationFailed'), 'error');
     }
   };
 
   return (
     <AppLayout>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box><Typography variant="h4" fontWeight="700">Employees</Typography><Typography variant="body2" color="text.secondary">Manage staff accounts</Typography></Box>
-        <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>Add Employee</Button>
+        <Box><Typography variant="h4" fontWeight="700">{t('employees')}</Typography><Typography variant="body2" color="text.secondary">{t('manageStaffAccounts')}</Typography></Box>
+        <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>{t('addEmployee')}</Button>
       </Box>
 
-      {loading ? (<Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>) : employees.length === 0 ? (<Card><EmptyState title="No employees yet" message="Start by adding your first staff member" actionLabel="Add Employee" onAction={() => setDialogOpen(true)} /></Card>) : (
+      {loading ? (<Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>) : employees.length === 0 ? (<Card><EmptyState title={t('noEmployeesYet')} message={t('addYourFirstStaff')} actionLabel={t('addEmployee')} onAction={() => setDialogOpen(true)} /></Card>) : (
         <Card>
           <TableContainer>
             <Table>
-              <TableHead><TableRow><TableCell><strong>Name</strong></TableCell><TableCell><strong>Email</strong></TableCell><TableCell><strong>Role</strong></TableCell><TableCell><strong>Joined</strong></TableCell><TableCell align="right"><strong>Actions</strong></TableCell></TableRow></TableHead>
+              <TableHead><TableRow><TableCell><strong>{t('name')}</strong></TableCell><TableCell><strong>{t('email')}</strong></TableCell><TableCell><strong>{t('role')}</strong></TableCell><TableCell><strong>{t('joined')}</strong></TableCell><TableCell align="right"><strong>{t('actions')}</strong></TableCell></TableRow></TableHead>
               <TableBody>
                 {employees.map((emp) => (
                   <TableRow key={emp._id} hover>
@@ -103,21 +105,21 @@ const Employees = () => {
       )}
 
       <Dialog open={dialogOpen} onClose={() => { setDialogOpen(false); setFormData({ name: '', email: '', password: '' }); setEditMode(false); setEditId(null); }} maxWidth="sm" fullWidth>
-        <DialogTitle>{editMode ? 'Edit Employee' : 'Add Employee'}</DialogTitle>
+        <DialogTitle>{editMode ? t('editEmployee') : t('addEmployee')}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
-            <Grid item xs={12}><TextField fullWidth label="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Password" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!editMode} helperText={editMode ? "Leave blank to keep current password" : ""} /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('name')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('email')} type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Grid>
+            <Grid item xs={12}><TextField fullWidth label={t('password')} type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!editMode} helperText={editMode ? t('leaveBlankToKeepPassword') : ""} /></Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setDialogOpen(false); }}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>{editMode ? 'Update' : 'Create'}</Button>
+          <Button onClick={() => { setDialogOpen(false); }}>{t('cancel')}</Button>
+          <Button variant="contained" onClick={handleSubmit}>{editMode ? t('update') : t('create')}</Button>
         </DialogActions>
       </Dialog>
 
-      <ConfirmDialog open={deleteDialog.open} title="Delete Employee" message="Are you sure you want to delete this employee?" onConfirm={handleDelete} onCancel={() => setDeleteDialog({ open: false, id: null })} />
+      <ConfirmDialog open={deleteDialog.open} title={t('deleteEmployee')} message={t('areYouSureDeleteEmployee')} onConfirm={handleDelete} onCancel={() => setDeleteDialog({ open: false, id: null })} />
     </AppLayout>
   );
 };

@@ -30,11 +30,13 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import AppLayout from '../../components/Layout/AppLayout';
-import { analyticsService } from '../../services/analyticsService';
 import { useToast } from '../../components/Toast';
+import { analyticsService } from '../../services/analyticsService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const Dashboard = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [revenueData, setRevenueData] = useState([]);
@@ -62,7 +64,7 @@ const Dashboard = () => {
       setTopProducts(productsRes.data);
       setExpensesByCategory(expensesRes.data);
     } catch (error) {
-      showToast('Failed to load dashboard data', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -123,48 +125,48 @@ const Dashboard = () => {
     return (
     <AppLayout>
       <Typography variant="h4" fontWeight="700" color="text.primary" gutterBottom>
-        Dashboard
+        {t('dashboard')}
       </Typography>
       <Typography variant="body2" color="text.secondary" mb={3}>
-        Overview of your business performance
+        {t('overview')}
       </Typography>
 
       {/* Stats Cards */}
       <Grid container spacing={3} mb={4}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Total Revenue"
+            title={t('totalRevenue')}
             value={stats.revenue.total}
             icon={TrendingUp}
             color="#00ED64"
-            subtitle={`This month: ₹${stats.revenue.thisMonth.toLocaleString()}`}
+            subtitle={`${t('thisMonth')}: ₹${stats.revenue.thisMonth.toLocaleString()}`}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Total Expenses"
+            title={t('totalExpenses')}
             value={stats.expenses.total}
             icon={AttachMoney}
             color="#FF0000"
-            subtitle={`This month: ₹${stats.expenses.thisMonth.toLocaleString()}`}
+            subtitle={`${t('thisMonth')}: ₹${stats.expenses.thisMonth.toLocaleString()}`}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Net Profit"
+            title={t('netProfit')}
             value={stats.profit.total}
             icon={ShoppingCart}
             color="#00684A"
-            subtitle={`This month: ₹${stats.profit.thisMonth.toLocaleString()}`}
+            subtitle={`${t('thisMonth')}: ₹${stats.profit.thisMonth.toLocaleString()}`}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Total Customers"
+            title={t('totalCustomers')}
             value={stats.counts.customers}
             icon={People}
             color="#00ED64"
-            subtitle={`${stats.counts.sales} total sales`}
+            subtitle={`${stats.counts.sales} ${t('totalSales')}`}
           />
         </Grid>
       </Grid>
@@ -176,7 +178,7 @@ const Dashboard = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight="600" gutterBottom>
-                Revenue Trend (Last 7 Days)
+                {t('recentActivity')}
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={revenueData}>
@@ -214,7 +216,7 @@ const Dashboard = () => {
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" fontWeight="600" gutterBottom>
-                Expenses by Category
+                {t('expenses')}
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
@@ -244,7 +246,7 @@ const Dashboard = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight="600" gutterBottom>
-                Top Customers
+                {t('customers')}
               </Typography>
               <Box>
                 {topCustomers.map((customer, index) => (
@@ -264,7 +266,7 @@ const Dashboard = () => {
                         {customer.customerName}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {customer.totalPurchases} purchases
+                        {customer.totalPurchases} {t('purchases')}
                       </Typography>
                     </Box>
                     <Typography variant="h6" color="primary.main" fontWeight="700">
@@ -282,7 +284,7 @@ const Dashboard = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight="600" gutterBottom>
-                Top Products
+                {t('products')}
               </Typography>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={topProducts}>

@@ -20,41 +20,43 @@ import {
   FlashOn,
   ArrowForward
 } from '@mui/icons-material';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Landing = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const features = [
     {
       icon: <TrendingUp sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Real-Time Analytics',
-      description: 'Track revenue, expenses, and profit with live dashboards updated in real-time.'
+      title: t('featureAnalyticsTitle'),
+      description: t('featureAnalyticsDesc')
     },
     {
       icon: <People sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Customer Management',
-      description: 'Manage customers, track purchases, and build lasting business relationships.'
+      title: t('featureCustomersTitle'),
+      description: t('featureCustomersDesc')
     },
     {
       icon: <ShoppingCart sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Sales Tracking',
-      description: 'Detailed recording of sales, inventory management, and performance monitoring.'
+      title: t('featureSalesTitle'),
+      description: t('featureSalesDesc')
     },
     {
       icon: <Analytics sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Business Insights',
-      description: 'Get actionable insights with powerful data-driven analytics tools.'
+      title: t('featureInsightsTitle'),
+      description: t('featureInsightsDesc')
     },
     {
       icon: <Security sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Secure Access',
-      description: 'Enterprise-grade role-based permissions to control your team access.'
+      title: t('featureSecurityTitle'),
+      description: t('featureSecurityDesc')
     },
     {
       icon: <FlashOn sx={{ fontSize: 32, color: '#00ED64' }} />,
-      title: 'Fast Deployment',
-      description: 'Start managing your business in minutes with our cloud-native platform.'
+      title: t('featureFastTitle'),
+      description: t('featureFastDesc')
     }
   ];
 
@@ -75,7 +77,7 @@ const Landing = () => {
              <Typography variant="h6" fontWeight="700" color="text.primary">BizFlow</Typography>
           </Box>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Button color="inherit" sx={{ fontWeight: 500 }} onClick={() => navigate('/login')}>Sign In</Button>
+            <Button color="inherit" sx={{ fontWeight: 500 }} onClick={() => navigate('/login')}>{t('signIn')}</Button>
             <Button 
                 variant="contained" 
                 sx={{ 
@@ -86,7 +88,7 @@ const Landing = () => {
                 }}
                 onClick={() => navigate('/register')}
             >
-                Get Started
+                {t('getStarted')}
             </Button>
           </Stack>
         </Container>
@@ -116,7 +118,7 @@ const Landing = () => {
                   mb: 2
                 }}
               >
-                BizFlow <span style={{ color: '#00ED64' }}>Atlas</span> Database
+                BizFlow <span style={{ color: '#00ED64' }}>Atlas</span> {t('landingHeroTitle').replace('BizFlow Atlas ', '')}
               </Typography>
               <Typography
                 variant="h6"
@@ -128,7 +130,7 @@ const Landing = () => {
                   fontSize: '1.25rem'
                 }}
               >
-                The most effective way to manage your local business operations. Enjoy unmatched resilience, scalability, and enterprise-grade security while eliminating operational complexity.
+                {t('landingHeroSubtitle')}
               </Typography>
               <Stack direction="row" spacing={2}>
                 <Button
@@ -145,7 +147,7 @@ const Landing = () => {
                   }}
                   onClick={() => navigate('/register')}
                 >
-                  Get Started
+                  {t('getStarted')}
                 </Button>
                 <Button
                   variant="text"
@@ -161,7 +163,7 @@ const Landing = () => {
                   endIcon={<ArrowForward />}
                   onClick={() => navigate('/customer/login')}
                 >
-                  Customer Portal
+                  {t('customerPortal')}
                 </Button>
               </Stack>
             </Grid>
@@ -226,14 +228,14 @@ const Landing = () => {
                 color: 'text.primary'
             }}
             >
-            Everything you need to <br/> run your business
+            {t('landingCTATitle').split(' ').slice(1).join(' ')} <br/> {t('landingCTATitle').split(' ')[0]}
             </Typography>
             <Typography
             variant="h6"
             color="text.secondary"
             sx={{ maxWidth: '700px', fontWeight: 400 }}
             >
-            Powerful features designed to simplify operations, increase efficiency, and provide deep insights into your business performance.
+            {t('landingHeroSubtitle').split('.').slice(0, 1) + '.'}
             </Typography>
         </Box>
 
@@ -273,10 +275,10 @@ const Landing = () => {
         <Container maxWidth="md">
           <Box textAlign="center">
             <Typography variant="h3" fontWeight="700" sx={{ mb: 3, color: 'text.primary' }}>
-              Cloud-native business management
+              {t('landingCTATitle')}
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{ mb: 5, fontWeight: 400 }}>
-              Join hundreds of local businesses that have already scaled their operations with BizFlow.
+              {t('landingCTASubtitle')}
             </Typography>
             <Button
               variant="contained"
@@ -292,7 +294,7 @@ const Landing = () => {
               }}
               onClick={() => navigate('/register')}
             >
-              Try BizFlow Atlas for Free
+              {t('tryForFree')}
             </Button>
           </Box>
         </Container>
@@ -302,7 +304,7 @@ const Landing = () => {
       <Box sx={{ bgcolor: isDark ? 'background.paper' : '#F9FBFA', py: 5, borderTop: 1, borderColor: 'divider' }}>
           <Container maxWidth="lg">
               <Typography variant="caption" color="text.secondary">
-                  © 2026 BizFlow, Inc. Built for local business growth.
+                  {t('footerCopyright')}
               </Typography>
           </Container>
       </Box>

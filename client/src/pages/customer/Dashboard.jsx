@@ -30,10 +30,12 @@ import AppLayout from '../../components/Layout/AppLayout';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/Toast';
 import { saleService } from '../../services/saleService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const CustomerDashboard = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +48,7 @@ const CustomerDashboard = () => {
       const res = await saleService.getSales();
       setSales(res.data);
     } catch (error) {
-      showToast('Failed to load your purchase history', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -121,17 +123,17 @@ const CustomerDashboard = () => {
     <AppLayout>
       <Box mb={5}>
         <Typography variant="h4" fontWeight="700" sx={{ color: 'text.primary', mb: 1, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
-          Hello, {user?.name}!
+          {t('hello')}, {user?.name}!
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Welcome to your customer portal. Track your purchases and payments here.
+          {t('welcomeCustomerPortal')}
         </Typography>
       </Box>
 
       <Grid container spacing={3} mb={6}>
         <Grid item xs={12} md={4}>
           <StatCard 
-            title="Total Purchases" 
+            title={t('totalPurchases')} 
             value={`₹${totalSpent.toLocaleString()}`} 
             icon={<ShoppingCart sx={{ fontSize: 24 }} />} 
             color="#00ED64"
@@ -139,7 +141,7 @@ const CustomerDashboard = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <StatCard 
-            title="Remaining Balance" 
+            title={t('remainingBalance')} 
             value={`₹${totalBalance.toLocaleString()}`} 
             icon={<AccountBalanceWallet sx={{ fontSize: 24 }} />} 
             color={totalBalance > 0 ? '#FF0000' : '#00684A'}
@@ -147,7 +149,7 @@ const CustomerDashboard = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <StatCard 
-            title="Recent Activity" 
+            title={t('recentActivity')} 
             value={lastPurchase ? new Date(lastPurchase.createdAt).toLocaleDateString() : 'N/A'} 
             icon={<Receipt sx={{ fontSize: 24 }} />} 
             color="#00ED64"
@@ -156,26 +158,26 @@ const CustomerDashboard = () => {
       </Grid>
 
       <Typography variant="h5" fontWeight="700" sx={{ color: 'text.primary', mb: 3, fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-        Recent Transactions
+        {t('recentTransactions')}
       </Typography>
       
       <TableContainer component={Paper} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: 'none', overflow: 'auto', overflowX: 'auto' }}>
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#F9FBFA' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Items</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Total</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Paid</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Balance</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('date')}</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('items')}</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('total')}</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('amountPaid')}</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('balance')}</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>{t('status')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {sales.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 6, color: '#5C6B75' }}>
-                  No transactions found.
+                  {t('noTransactionsFound')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -194,7 +196,7 @@ const CustomerDashboard = () => {
                   </TableCell>
                   <TableCell>
                     <Chip 
-                      label={sale.paymentStatus} 
+                      label={t(sale.paymentStatus.toLowerCase()) || sale.paymentStatus} 
                       size="small" 
                       sx={{ 
                           fontWeight: 700,
@@ -229,7 +231,7 @@ const CustomerDashboard = () => {
             </Box>
           </Box>
           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', maxWidth: '600px', lineHeight: 1.6 }}>
-            Thank you for being a valued customer! Track your purchases, payments, and balances in real-time. If you have any questions, please contact our support team.
+            {t('customerThankYou')}
           </Typography>
         </Box>
       )}

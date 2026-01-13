@@ -20,11 +20,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/Toast';
 import { authService } from '../../services/authService';
 import ForgotPasswordDialog from '../../components/Auth/ForgotPasswordDialog';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const CustomerLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
@@ -50,10 +52,10 @@ const CustomerLogin = () => {
         
       const response = await authService.customerLogin(payload);
       login(response.data.user, response.data.token);
-      showToast('Welcome back!', 'success');
+      showToast(t('welcomeBack'), 'success');
       navigate('/customer/dashboard');
     } catch (error) {
-      showToast(error.response?.data?.message || 'Login failed', 'error');
+      showToast(error.response?.data?.message || t('loginFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -82,11 +84,11 @@ const CustomerLogin = () => {
                 alt="BizFlow"
             />
             <Typography variant="h4" fontWeight="700" sx={{ color: isDark ? 'white' : '#001E2B', letterSpacing: '-0.5px' }}>
-              Customer <span style={{ color: '#00ED64' }}>Portal</span>
+              {t('customerPortalTitle').split(' ')[0]} <span style={{ color: '#00ED64' }}>{t('customerPortalTitle').split(' ')[1]}</span>
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : '#5C6B75', fontWeight: 400 }}>
-            Access your orders and transaction history
+            {t('portalSubtitle')}
           </Typography>
         </Box>
 
@@ -107,8 +109,8 @@ const CustomerLogin = () => {
                 '& .MuiTabs-indicator': { bgcolor: '#00ED64' }
               }}
             >
-              <Tab label="Login with Email" value="email" />
-              <Tab label="Login with Phone" value="phone" />
+              <Tab label={t('loginEmail')} value="email" />
+              <Tab label={t('loginPhone')} value="phone" />
             </Tabs>
           </Box>
 
@@ -117,7 +119,7 @@ const CustomerLogin = () => {
               {loginType === 'email' ? (
                 <Box sx={{ mb: 2.5 }}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Email Address
+                    {t('email')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -126,7 +128,7 @@ const CustomerLogin = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    placeholder="your@email.com"
+                    placeholder={t('emailPlaceholder')}
                     sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -139,7 +141,7 @@ const CustomerLogin = () => {
               ) : (
                 <Box sx={{ mb: 2.5 }}>
                   <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                    Phone Number
+                    {t('phone')}
                   </Typography>
                   <TextField
                     fullWidth
@@ -147,7 +149,7 @@ const CustomerLogin = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    placeholder="Enter registered mobile number"
+                    placeholder={t('phonePlaceholder')}
                     sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -161,7 +163,7 @@ const CustomerLogin = () => {
 
               <Box sx={{ mb: 4 }}>
                 <Typography variant="caption" sx={{ color: isDark ? 'white' : '#001E2B', fontWeight: 600, mb: 1, display: 'block' }}>
-                  Password
+                  {t('password')}
                 </Typography>
                 <TextField
                   fullWidth
@@ -170,7 +172,7 @@ const CustomerLogin = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  placeholder="Enter your password"
+                  placeholder={t('passwordPlaceholder')}
                   sx={{ 
                         '& .MuiOutlinedInput-root': { 
                             bgcolor: isDark ? '#001E2B' : '#FFFFFF', 
@@ -205,14 +207,14 @@ const CustomerLogin = () => {
                     '&:hover': { bgcolor: '#00DA5C' }
                 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Access Customer Portal'}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t('accessPortal')}
               </Button>
 
               <Box sx={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#E8EDEB'}`, pt: 3, textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : '#5C6B75' }}>
-                  Looking for admin access?{' '}
+                  {t('adminAccessQuery')}{' '}
                   <Link to="/login" style={{ color: '#00ED64', textDecoration: 'none', fontWeight: 600 }}>
-                    Switch to Staff Login
+                    {t('switchToStaffLogin')}
                   </Link>
                 </Typography>
               </Box>
@@ -223,7 +225,7 @@ const CustomerLogin = () => {
                    sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary', textTransform: 'none' }}
                    onClick={() => setForgotPasswordOpen(true)}
                  >
-                   Forgot Password?
+                   {t('forgotPassword')}
                  </Button>
               </Box>
               <Box textAlign="center" mt={1}>
@@ -233,7 +235,7 @@ const CustomerLogin = () => {
                    sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary', textTransform: 'none' }}
                    onClick={() => navigate('/')}
                  >
-                   ← Back to Home
+                   ← {t('backToHome')}
                  </Button>
               </Box>
             </form>

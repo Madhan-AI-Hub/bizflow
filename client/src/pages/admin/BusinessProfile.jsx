@@ -4,9 +4,11 @@ import { Edit, Save, Business, ContactPhone, LocationOn, Badge, Category, Descri
 import AppLayout from '../../components/Layout/AppLayout';
 import { useToast } from '../../components/Toast';
 import { businessService } from '../../services/businessService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const BusinessProfile = () => {
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -33,7 +35,7 @@ const BusinessProfile = () => {
         website: res.data.website || ''
       });
     } catch (error) {
-      showToast('Failed to load business profile', 'error');
+      showToast(t('operationFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -42,11 +44,11 @@ const BusinessProfile = () => {
   const handleSubmit = async () => {
     try {
       await businessService.updateBusiness(formData);
-      showToast('Business profile updated successfully');
+      showToast(t('updateSuccess'));
       setEditing(false);
       loadBusiness();
     } catch (error) {
-      showToast('Update failed', 'error');
+      showToast(t('operationFailed'), 'error');
     }
   };
 
@@ -95,7 +97,7 @@ const BusinessProfile = () => {
             </Typography>
             <Stack direction="row" spacing={1}>
               <Chip label={business?.category} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} />
-              {business?.gstNumber && <Chip label="GST Registered" size="small" sx={{ bgcolor: 'primary.main', color: 'dark.main', fontWeight: 600 }} />}
+              {business?.gstNumber && <Chip label={t('gstRegistered')} size="small" sx={{ bgcolor: 'primary.main', color: 'dark.main', fontWeight: 600 }} />}
             </Stack>
           </Box>
         </Paper>
@@ -141,15 +143,15 @@ const BusinessProfile = () => {
                   '&:hover': { transform: 'translateY(-2px)', transition: '0.2s' }
                 }}
               >
-                Edit Business Profile
+                {t('edit')}
               </Button>
             ) : (
               <Stack direction="row" spacing={2}>
                 <Button variant="outlined" color="primary" startIcon={<Cancel />} onClick={handleCancel}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button variant="contained" startIcon={<Save />} onClick={handleSubmit}>
-                  Save Profile Changes
+                  {t('save')}
                 </Button>
               </Stack>
             )}
@@ -168,14 +170,14 @@ const BusinessProfile = () => {
                   <Avatar sx={{ bgcolor: 'secondary.light', color: 'secondary.main', mr: 2, width: 40, height: 40 }}>
                     <Business />
                   </Avatar>
-                  <Typography variant="h6">General Information</Typography>
+                  <Typography variant="h6">{t('overview')}</Typography>
                 </Box>
                 
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <TextField 
                       fullWidth 
-                      label="Business Name" 
+                      label={t('businessName')} 
                       variant="standard"
                       value={formData.name} 
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
@@ -185,7 +187,7 @@ const BusinessProfile = () => {
                   <Grid item xs={12} sm={6}>
                     <TextField 
                       fullWidth 
-                      label="Category" 
+                      label={t('category')} 
                       variant="standard"
                       value={formData.category} 
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })} 
@@ -195,10 +197,10 @@ const BusinessProfile = () => {
                   <Grid item xs={12}>
                     <TextField 
                       fullWidth 
-                      label="Business Description" 
+                      label={t('notes')} 
                       multiline 
                       rows={4}
-                      placeholder="Tell us about your business..."
+                      placeholder={t('tellUsAboutBusiness')}
                       value={formData.description} 
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
                       disabled={!editing} 
@@ -215,14 +217,14 @@ const BusinessProfile = () => {
                   <Avatar sx={{ bgcolor: 'error.light', color: 'error.main', mr: 2, width: 40, height: 40 }}>
                     <Badge />
                   </Avatar>
-                  <Typography variant="h6">Legal & Tax Identification</Typography>
+                  <Typography variant="h6">{t('legalTaxID')}</Typography>
                 </Box>
                 
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <TextField 
                       fullWidth 
-                      label="GST Number" 
+                      label={t('gstNumber')} 
                       placeholder="e.g. 22AAAAA0000A1Z5"
                       variant="standard"
                       value={formData.gstNumber} 
@@ -233,7 +235,7 @@ const BusinessProfile = () => {
                   <Grid item xs={12} sm={6}>
                     <TextField 
                       fullWidth 
-                      label="Business License Number" 
+                      label={t('businessLicense')} 
                       variant="standard"
                       value={formData.licenseNumber} 
                       onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })} 
@@ -254,7 +256,7 @@ const BusinessProfile = () => {
                 <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.dark', mr: 2, width: 40, height: 40 }}>
                   <ContactPhone />
                 </Avatar>
-                <Typography variant="h6">Contact Support & Location</Typography>
+                <Typography variant="h6">{t('contactLocation')}</Typography>
               </Box>
 
               <Stack spacing={4}>
@@ -262,7 +264,7 @@ const BusinessProfile = () => {
                   <Email color="action" sx={{ mt: 2, mr: 2 }} />
                   <TextField 
                     fullWidth 
-                    label="Public Business Email" 
+                    label={t('email')} 
                     variant="standard"
                     value={formData.email} 
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
@@ -274,7 +276,7 @@ const BusinessProfile = () => {
                   <Phone color="action" sx={{ mt: 2, mr: 2 }} />
                   <TextField 
                     fullWidth 
-                    label="Primary Phone Number" 
+                    label={t('phone')} 
                     variant="standard"
                     value={formData.phone} 
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
@@ -286,7 +288,7 @@ const BusinessProfile = () => {
                   <LocationOn color="action" sx={{ mt: 2, mr: 2 }} />
                   <TextField 
                     fullWidth 
-                    label="Physical Address" 
+                    label={t('address')} 
                     multiline
                     rows={3}
                     variant="standard"
@@ -300,7 +302,7 @@ const BusinessProfile = () => {
                   <Language color="action" sx={{ mt: 2, mr: 2 }} />
                   <TextField 
                     fullWidth 
-                    label="Website URL" 
+                    label={t('websiteURL')} 
                     placeholder="https://example.com"
                     variant="standard"
                     value={formData.website} 
@@ -313,7 +315,7 @@ const BusinessProfile = () => {
               {editing && (
                 <Box sx={{ mt: 6, p: 2, bgcolor: 'rgba(0, 237, 100, 0.05)', borderRadius: 2, border: '1px dashed', borderColor: 'primary.main' }}>
                   <Typography variant="body2" color="text.secondary" textAlign="center">
-                    You are currently in editing mode. Changes will be visible to staff and customers once saved.
+                    {t('editModeNotice')}
                   </Typography>
                 </Box>
               )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ToastProvider } from './components/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -39,9 +40,10 @@ function App() {
   return (
     <BrowserRouter>
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-      <ThemeProvider>
-        <AuthProvider>
-          <ToastProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
@@ -165,6 +167,7 @@ function App() {
           </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }
