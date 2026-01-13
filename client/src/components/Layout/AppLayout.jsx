@@ -179,7 +179,7 @@ const AppLayout = ({ children }) => {
                 <ListItemIcon sx={{ color: isActive ? '#001E2B' : theme.palette.text.secondary, minWidth: sidebarOpen ? 40 : 'auto', justifyContent: 'center' }}>
                   {item.icon}
                 </ListItemIcon>
-                {sidebarOpen && (
+                {(sidebarOpen || isMobile) && (
                   <ListItemText 
                     primary={item.text} 
                     primaryTypographyProps={{ 
@@ -207,7 +207,7 @@ const AppLayout = ({ children }) => {
           <Avatar sx={{ width: 32, height: 32, bgcolor: '#00ED64', color: '#001E2B', fontSize: '0.8rem', fontWeight: 700 }}>
             {user?.name?.charAt(0).toUpperCase()}
           </Avatar>
-          {sidebarOpen && (
+          {(sidebarOpen || isMobile) && (
             <Box sx={{ overflow: 'hidden' }}>
               <Typography variant="body2" fontWeight="600" sx={{ color: theme.palette.text.primary }} noWrap>
                 {user?.name}
@@ -229,11 +229,11 @@ const AppLayout = ({ children }) => {
         sx={{
           width: { xs: '100%', md: `calc(100% - ${sidebarOpen ? drawerWidth : miniDrawerWidth}px)` },
           ml: { md: `${sidebarOpen ? drawerWidth : miniDrawerWidth}px` },
-          backgroundColor: '#00ED64',
-          color: '#001E2B',
+          backgroundColor: { xs: 'background.default', md: '#00ED64' },
+          color: { xs: 'text.primary', md: '#001E2B' },
           boxShadow: 'none',
           borderBottom: '1px solid',
-          borderColor: '#00DA5C',
+          borderColor: { xs: 'divider', md: '#00DA5C' },
           zIndex: (theme) => theme.zIndex.drawer - 1,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
