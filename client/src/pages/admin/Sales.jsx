@@ -20,6 +20,8 @@ const Sales = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState(null);
   const [paymentAmount, setPaymentAmount] = useState(0);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [saleToDelete, setSaleToDelete] = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
@@ -87,6 +89,23 @@ const Sales = () => {
     }
   };
 
+  const handleDeleteClick = (sale) => {
+    setSaleToDelete(sale);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await saleService.deleteSale(saleToDelete._id);
+      showToast('Sale deleted successfully');
+      setDeleteDialogOpen(false);
+      setSaleToDelete(null);
+      loadData();
+    } catch (error) {
+      showToast(error.response?.data?.message || 'Delete failed', 'error');
+    }
+  };
+
   const addItem = () => {
     setSelectedItems([...selectedItems, { product: null, quantity: 1 }]);
   };
@@ -148,17 +167,16 @@ const Sales = () => {
                       />
                     </TableCell>
                     <TableCell align="right">
-                      {sale.balanceAmount > 0 ? (
-                        <Tooltip title="Update Payment">
-                          <IconButton size="small" color="primary" onClick={() => handleEditOpen(sale)}>
-                            <Payment fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      ) : (
-                        <IconButton size="small" disabled>
-                          <CheckCircle fontSize="small" color="disabled" />
+                      <Tooltip title="Update Payment">
+                        <IconButton size="small" color="primary" onClick={() => handleEditOpen(sale)} disabled={sale.balanceAmount <= 0}>
+                          <Payment fontSize="small" />
                         </IconButton>
-                      )}
+                      </Tooltip>
+                      <Tooltip title="Delete Sale">
+                        <IconButton size="small" color="error" onClick={() => handleDeleteClick(sale)}>
+                          <Delete fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -229,6 +247,25 @@ const Sales = () => {
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleUpdatePayment} disabled={paymentAmount <= 0}>Update Payment</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} maxWidth="xs">
+        <DialogTitle>Delete Sale</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this sale for <strong>{saleToDelete?.customerName}</strong>?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            Total Amount: ₹{saleToDelete?.totalAmount.toLocaleString()}
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>Delete</Button>
         </DialogActions>
       </Dialog>
     </AppLayout>

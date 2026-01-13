@@ -14,6 +14,8 @@ const Employees = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => { loadEmployees(); }, []);
 
@@ -30,14 +32,28 @@ const Employees = () => {
 
   const handleSubmit = async () => {
     try {
-      await employeeService.createEmployee(formData);
-      showToast('Employee created successfully');
+      if (editMode) {
+        await employeeService.updateEmployee(editId, formData);
+        showToast('Employee updated successfully');
+      } else {
+        await employeeService.createEmployee(formData);
+        showToast('Employee created successfully');
+      }
       setDialogOpen(false);
       setFormData({ name: '', email: '', password: '' });
+      setEditMode(false);
+      setEditId(null);
       loadEmployees();
     } catch (error) {
       showToast(error.response?.data?.message || 'Operation failed', 'error');
     }
+  };
+
+  const handleEdit = (employee) => {
+    setFormData({ name: employee.name, email: employee.email, password: '' });
+    setEditId(employee._id);
+    setEditMode(true);
+    setDialogOpen(true);
   };
 
   const handleDelete = async () => {
@@ -70,7 +86,14 @@ const Employees = () => {
                     <TableCell>{emp.email}</TableCell>
                     <TableCell>{emp.role}</TableCell>
                     <TableCell>{new Date(emp.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell align="right"><IconButton onClick={() => setDeleteDialog({ open: true, id: emp._id })} size="small" color="error"><Delete /></IconButton></TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={() => handleEdit(emp)} size="small" color="primary">
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={() => setDeleteDialog({ open: true, id: emp._id })} size="small" color="error">
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -79,18 +102,18 @@ const Employees = () => {
         </Card>
       )}
 
-      <Dialog open={dialogOpen} onClose={() => { setDialogOpen(false); setFormData({ name: '', email: '', password: '' }); }} maxWidth="sm" fullWidth>
-        <DialogTitle>Add Employee</DialogTitle>
+      <Dialog open={dialogOpen} onClose={() => { setDialogOpen(false); setFormData({ name: '', email: '', password: '' }); setEditMode(false); setEditId(null); }} maxWidth="sm" fullWidth>
+        <DialogTitle>{editMode ? 'Edit Employee' : 'Add Employee'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
             <Grid item xs={12}><TextField fullWidth label="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Grid>
             <Grid item xs={12}><TextField fullWidth label="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Password" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required /></Grid>
+            <Grid item xs={12}><TextField fullWidth label="Password" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!editMode} helperText={editMode ? "Leave blank to keep current password" : ""} /></Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => { setDialogOpen(false); }}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>Create</Button>
+          <Button variant="contained" onClick={handleSubmit}>{editMode ? 'Update' : 'Create'}</Button>
         </DialogActions>
       </Dialog>
 
