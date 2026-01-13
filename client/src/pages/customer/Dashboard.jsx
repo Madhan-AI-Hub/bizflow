@@ -120,7 +120,7 @@ const CustomerDashboard = () => {
   return (
     <AppLayout>
       <Box mb={5}>
-        <Typography variant="h4" fontWeight="700" sx={{ color: 'text.primary', mb: 1 }}>
+        <Typography variant="h4" fontWeight="700" sx={{ color: 'text.primary', mb: 1, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
           Hello, {user?.name}!
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
@@ -155,12 +155,12 @@ const CustomerDashboard = () => {
         </Grid>
       </Grid>
 
-      <Typography variant="h5" fontWeight="700" sx={{ color: 'text.primary', mb: 3 }}>
+      <Typography variant="h5" fontWeight="700" sx={{ color: 'text.primary', mb: 3, fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
         Recent Transactions
       </Typography>
       
-      <TableContainer component={Paper} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: 'none', overflow: 'hidden' }}>
-        <Table>
+      <TableContainer component={Paper} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: 'none', overflow: 'auto', overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#F9FBFA' }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700, color: 'text.primary' }}>Date</TableCell>

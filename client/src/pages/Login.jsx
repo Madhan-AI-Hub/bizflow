@@ -193,6 +193,16 @@ const Login = () => {
                  Forgot Password?
                </Button>
             </Box>
+            <Box textAlign="center" mt={1}>
+               <Button 
+                 variant="text" 
+                 size="small" 
+                 sx={{ color: '#00ED64', textTransform: 'none', fontWeight: 600 }}
+                 onClick={() => navigate('/customer/login')}
+               >
+                 Switch to Customer Login →
+               </Button>
+            </Box>
           </CardContent>
         </Card>
       </Container>

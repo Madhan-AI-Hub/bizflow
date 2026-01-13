@@ -13,7 +13,8 @@ export const authService = {
 
   customerLogin: async (credentials) => {
     // credentials can be { email, password } or { phone, password }
-    return await api.post('/auth/customer-login', credentials);
+    const response = await api.post('/auth/customer-login', credentials);
+    return response.data;
   },
 
   forgotPassword: async (email) => {

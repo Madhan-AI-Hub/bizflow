@@ -63,7 +63,12 @@ const AppLayout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    // Redirect to appropriate login page based on role
+    if (isCustomer()) {
+      navigate('/customer/login');
+    } else {
+      navigate('/login');
+    }
   };
 
   let menuItems = [];
@@ -79,7 +84,7 @@ const AppLayout = ({ children }) => {
       { text: 'Employees', icon: <People />, path: '/employees' },
       { text: 'Support', icon: <HelpOutline />, path: '/support' }
     ];
-  } else if (isCustomer && isCustomer()) {
+  } else if (isCustomer()) {
     menuItems = [
       { text: 'My Dashboard', icon: <Dashboard />, path: '/customer/dashboard' },
       { text: 'Support', icon: <HelpOutline />, path: '/support' }
@@ -189,14 +194,14 @@ const AppLayout = ({ children }) => {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
           backgroundColor: 'background.default',
           color: 'text.primary',
           boxShadow: 'none',
           borderBottom: '1px solid',
           borderColor: 'divider',
-          zIndex: (theme) => theme.zIndex.drawer + 1
+          zIndex: (theme) => theme.zIndex.drawer - 1
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -277,9 +282,9 @@ const AppLayout = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 4,
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-          mt: 8,
+          p: { xs: 2, sm: 3, md: 4 },
+          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
+          mt: { xs: 7, sm: 8 },
           backgroundColor: 'background.default',
           minHeight: '100vh'
         }}

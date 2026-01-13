@@ -226,6 +226,16 @@ const CustomerLogin = () => {
                    Forgot Password?
                  </Button>
               </Box>
+              <Box textAlign="center" mt={1}>
+                 <Button 
+                   variant="text" 
+                   size="small" 
+                   sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary', textTransform: 'none' }}
+                   onClick={() => navigate('/')}
+                 >
+                   ← Back to Home
+                 </Button>
+              </Box>
             </form>
           </CardContent>
         </Card>

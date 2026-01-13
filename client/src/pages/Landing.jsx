@@ -161,7 +161,7 @@ const Landing = () => {
                   endIcon={<ArrowForward />}
                   onClick={() => navigate('/customer/login')}
                 >
-                  Contact sales
+                  Customer Portal
                 </Button>
               </Stack>
             </Grid>

@@ -28,6 +28,10 @@ exports.protect = async (req, res, next) => {
     
     if (!req.user) {
       req.user = await Customer.findById(decoded.id).select('-password');
+      // Explicitly set role to CUSTOMER if found in Customer model
+      if (req.user) {
+        req.user.role = 'CUSTOMER';
+      }
     }
 
     if (!req.user) {
